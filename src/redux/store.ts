@@ -10,7 +10,9 @@ export const store = configureStore({
 })
 
 window.onbeforeunload = () => {
-    localStorage.setItem(saveKey, JSON.stringify(store.getState()))
+    const state = store.getState()
+    if (state.todo.columns.length)
+        localStorage.setItem(saveKey, JSON.stringify(state))
 }
 
 export const saveKey = 'savedState'

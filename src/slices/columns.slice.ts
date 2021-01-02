@@ -1,13 +1,29 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Column, TodoState } from '../model/app.model'
+import { TodoState } from '../model/app.model'
 import { DraggableTodoItem } from '../model/drag.model'
+
+const initialState: TodoState = {
+    columns: [
+        {
+            name: 'ToDo',
+            items: [
+                {
+                    id: 0,
+                    text: 'Change order of items',
+                },
+            ],
+        },
+        {
+            name: 'Done',
+            items: [],
+        },
+    ],
+    nextId: 1,
+}
 
 const columnsSlice = createSlice({
     name: 'columns',
-    initialState: {
-        columns: [] as Column[],
-        nextId: 0,
-    },
+    initialState: initialState,
     reducers: {
         LoadSavedColumns(state, action: PayloadAction<TodoState>) {
             state.columns = action.payload.columns
@@ -31,7 +47,8 @@ const columnsSlice = createSlice({
             state.nextId++
         },
         ClearColumns(state) {
-            state.columns.length = 0
+            state.columns = []
+            state.nextId = 0
         },
         MoveEntry(
             state,

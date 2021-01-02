@@ -8,10 +8,10 @@ export function useLoadSavedColumns(): void {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        const savedState: AppState = JSON.parse(
-            localStorage.getItem(saveKey) || JSON.stringify({ columns: [] }),
-        )
-
-        dispatch(LoadSavedColumns(savedState.todo))
+        const savedString = localStorage.getItem(saveKey)
+        if (savedString) {
+            const savedState: AppState = JSON.parse(savedString)
+            dispatch(LoadSavedColumns(savedState.todo))
+        }
     }, [])
 }

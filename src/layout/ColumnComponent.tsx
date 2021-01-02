@@ -15,18 +15,22 @@ import ItemComponent from './ItemComponent'
 const useStyles = makeStyles(
     createStyles({
         container: {
-            maxHeight: '500px',
+            height: '500px',
             width: '300px',
             marginLeft: '8px',
             marginRight: '8px',
             marginBottom: '16px',
             border: '1px solid gray',
             borderRadius: '4px',
+            display: 'flex',
+            flexDirection: 'column',
         },
         itemContainer: {
             display: 'flex',
             flexDirection: 'column',
+            flexGrow: 1,
             padding: '8px',
+            overflow: 'auto',
         },
     }),
 )
