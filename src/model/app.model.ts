@@ -5,8 +5,14 @@ export interface Column {
 
 export interface Card {
     text: string
+    id: number
 }
 
 export interface AppState {
+    todo: TodoState
+}
+
+export interface TodoState {
     columns: Column[]
+    nextId: number
 }

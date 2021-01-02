@@ -1,28 +1,56 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Card, Column } from '../model/app.model'
+import { Column, TodoState } from '../model/app.model'
+import { DraggableTodoItem } from '../model/drag.model'
 
 const columnsSlice = createSlice({
     name: 'columns',
-    initialState: [] as Column[],
+    initialState: {
+        columns: [] as Column[],
+        nextId: 0,
+    },
     reducers: {
-        LoadSavedColumns(state, action: PayloadAction<Column[]>) {
-            state.push(...action.payload)
+        LoadSavedColumns(state, action: PayloadAction<TodoState>) {
+            state.columns = action.payload.columns
+            state.nextId = action.payload.nextId
         },
         AddColumn(state, action: PayloadAction<{ name: string }>) {
-            state.push({
+            state.columns.push({
                 name: action.payload.name,
                 items: [],
             })
         },
         AddEntryToColumn(
             state,
-            action: PayloadAction<{ colIndex: number; entry: Card }>,
+            action: PayloadAction<{ colIndex: number; text: string }>,
         ) {
-            const { colIndex, entry } = action.payload
-            state[colIndex].items.push(entry)
+            const { colIndex, text } = action.payload
+            state.columns[colIndex].items.push({
+                text,
+                id: state.nextId,
+            })
+            state.nextId++
         },
         ClearColumns(state) {
-            state.length = 0
+            state.columns.length = 0
+        },
+        MoveEntry(
+            state,
+            action: PayloadAction<{
+                item: DraggableTodoItem
+                sourceCol: number
+                sourceEntryIndex: number
+                targetCol: number
+            }>,
+        ) {
+            const { columns } = state
+            const {
+                item,
+                sourceCol,
+                targetCol,
+                sourceEntryIndex,
+            } = action.payload
+            columns[sourceCol].items.splice(sourceEntryIndex, 1)
+            columns[targetCol].items.push(item.item)
         },
     },
 })
@@ -32,5 +60,6 @@ export const {
     AddColumn,
     AddEntryToColumn,
     ClearColumns,
+    MoveEntry,
 } = columnsSlice.actions
 export default columnsSlice

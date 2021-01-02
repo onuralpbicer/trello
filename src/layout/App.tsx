@@ -1,10 +1,10 @@
 import { createStyles, makeStyles } from '@material-ui/styles'
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch } from 'react-redux'
-import Modal from '../components/Modal'
+import AddColumnModal from '../components/AddColumnModal'
 import { useLoadSavedColumns } from '../hooks/useLoadOldSave'
 import { useNumColumns } from '../hooks/useNumColumns'
-import { AddColumn, ClearColumns } from '../slices/columns.slice'
+import { ClearColumns } from '../slices/columns.slice'
 import ColumnComponent from './ColumnComponent'
 
 const useStyles = makeStyles(
@@ -28,47 +28,10 @@ const App = (): JSX.Element => {
     useLoadSavedColumns()
     const dispatch = useDispatch()
 
-    const [newColumnName, setNewColumnName] = useState<string>('')
-    const [openCreateColumn, setOpenCreateColumn] = useState<boolean>(false)
-
-    const handleAddColumn = () => {
-        if (newColumnName) {
-            dispatch(AddColumn({ name: newColumnName }))
-            setNewColumnName('')
-            setOpenCreateColumn(false)
-        }
-    }
-
-    const handleCloseNewColumn = () => {
-        setOpenCreateColumn(false)
-        setNewColumnName('')
-    }
-
     return (
         <div className={classes.pageContainer}>
             <div>
-                <Modal show={openCreateColumn} onClose={handleCloseNewColumn}>
-                    <div>
-                        <div>Create New Column</div>
-                        <input
-                            placeholder="Enter Column Name"
-                            value={newColumnName}
-                            onChange={(event) =>
-                                setNewColumnName(event.target.value)
-                            }
-                            autoFocus
-                        />
-                        <button
-                            onClick={handleAddColumn}
-                            disabled={!newColumnName}
-                        >
-                            Add
-                        </button>
-                    </div>
-                </Modal>
-                <button onClick={() => setOpenCreateColumn(true)}>
-                    Add Column
-                </button>
+                <AddColumnModal />
                 <button onClick={() => dispatch(ClearColumns())}>Clear</button>
             </div>
             <div className={classes.container}>

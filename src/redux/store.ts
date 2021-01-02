@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import columnsSlice from '../slices/columns.slice'
 
 const reducer = combineReducers({
-    columns: columnsSlice.reducer,
+    todo: columnsSlice.reducer,
 })
 
 export const store = configureStore({

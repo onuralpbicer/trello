@@ -1,26 +1,32 @@
 import { makeStyles, createStyles } from '@material-ui/styles'
-import React, { useState } from 'react'
+import React from 'react'
+import { useDrop } from 'react-dnd'
 import { useDispatch } from 'react-redux'
-import Modal from '../components/Modal'
+import AddNewEntryModal from '../components/AddNewEntryModal'
 import { useColumn } from '../hooks/useColumn'
-import { AddEntryToColumn } from '../slices/columns.slice'
+import {
+    DraggableTodoItem,
+    DragItemTypes,
+    DropProps,
+} from '../model/drag.model'
+import { MoveEntry } from '../slices/columns.slice'
 import ItemComponent from './ItemComponent'
 
 const useStyles = makeStyles(
     createStyles({
         container: {
             maxHeight: '500px',
-            backgroundColor: '#ff000022',
-            width: '200px',
-            marginRight: '16px',
+            width: '300px',
+            marginLeft: '8px',
+            marginRight: '8px',
             marginBottom: '16px',
-            '&:last-of-type': {
-                marginRight: '0px',
-            },
+            border: '1px solid gray',
+            borderRadius: '4px',
         },
         itemContainer: {
             display: 'flex',
             flexDirection: 'column',
+            padding: '8px',
         },
     }),
 )
@@ -33,48 +39,46 @@ const ColumnComponent = (props: ColumnComponentProps): JSX.Element => {
     const { colIndex } = props
     const classes = useStyles(props)
 
-    const dispatch = useDispatch()
     const { name, items } = useColumn(colIndex)
+    const dispatch = useDispatch()
 
-    const [openNewEntry, setOpenNewEntry] = useState<boolean>(false)
-    const [newEntry, setNewEntry] = useState<string>('')
-
-    const handleCloseNewEntry = () => {
-        setNewEntry('')
-        setOpenNewEntry(false)
-    }
-
-    const handleAddEntry = () => {
-        if (newEntry) {
-            dispatch(AddEntryToColumn({ colIndex, entry: { text: newEntry } }))
-            handleCloseNewEntry()
-        }
-    }
+    const [{ isOver }, drop] = useDrop<DraggableTodoItem, unknown, DropProps>({
+        accept: DragItemTypes.TodoItem,
+        collect(monitor) {
+            return {
+                isOver: monitor.isOver(),
+            }
+        },
+        drop(dragItem) {
+            dispatch(
+                MoveEntry({
+                    item: dragItem,
+                    sourceCol: dragItem.startLocation.colIndex,
+                    sourceEntryIndex: dragItem.startLocation.entryIndex,
+                    targetCol: colIndex,
+                }),
+            )
+        },
+    })
 
     return (
-        <div className={classes.container}>
+        <div
+            className={classes.container}
+            ref={drop}
+            style={{ backgroundColor: isOver ? 'green' : 'transparent' }}
+        >
             <div>
                 {name}
-                <button onClick={() => setOpenNewEntry(true)}>+</button>
-                <Modal show={openNewEntry} onClose={handleCloseNewEntry}>
-                    <div>
-                        <input
-                            placeholder="message"
-                            value={newEntry}
-                            onChange={(event) =>
-                                setNewEntry(event.target.value)
-                            }
-                            autoFocus
-                        />
-                        <button disabled={!newEntry} onClick={handleAddEntry}>
-                            Add
-                        </button>
-                    </div>
-                </Modal>
+                <AddNewEntryModal colIndex={colIndex} />
             </div>
             <div className={classes.itemContainer}>
                 {items.map((item, index) => (
-                    <ItemComponent key={`${colIndex}${index}`} {...item} />
+                    <ItemComponent
+                        key={`${colIndex}${index}${item.id}`}
+                        card={item}
+                        colIndex={colIndex}
+                        entryIndex={index}
+                    />
                 ))}
             </div>
         </div>

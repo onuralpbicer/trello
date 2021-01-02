@@ -12,6 +12,6 @@ export function useLoadSavedColumns(): void {
             localStorage.getItem(saveKey) || JSON.stringify({ columns: [] }),
         )
 
-        dispatch(LoadSavedColumns(savedState.columns))
+        dispatch(LoadSavedColumns(savedState.todo))
     }, [])
 }
