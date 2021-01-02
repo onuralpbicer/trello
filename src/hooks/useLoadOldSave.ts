@@ -11,7 +11,8 @@ export function useLoadSavedColumns(): void {
         const savedString = localStorage.getItem(saveKey)
         if (savedString) {
             const savedState: AppState = JSON.parse(savedString)
-            dispatch(LoadSavedColumns(savedState.todo))
+            if (savedState.todo && savedState.todo.columns)
+                dispatch(LoadSavedColumns(savedState.todo))
         }
     }, [])
 }
