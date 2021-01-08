@@ -57,6 +57,7 @@ const columnsSlice = createSlice({
                 sourceCol: number
                 sourceEntryIndex: number
                 targetCol: number
+                targetIndex: number
             }>,
         ) {
             const { columns } = state
@@ -65,9 +66,10 @@ const columnsSlice = createSlice({
                 sourceCol,
                 targetCol,
                 sourceEntryIndex,
+                targetIndex,
             } = action.payload
             columns[sourceCol].items.splice(sourceEntryIndex, 1)
-            columns[targetCol].items.push(item.item)
+            columns[targetCol].items.splice(targetIndex, 0, item.item)
         },
     },
 })

@@ -1,5 +1,5 @@
 import { makeStyles, createStyles } from '@material-ui/styles'
-import React from 'react'
+import React, { useRef } from 'react'
 import { useDrop } from 'react-dnd'
 import { useDispatch } from 'react-redux'
 import AddNewEntryModal from '../components/AddNewEntryModal'
@@ -53,22 +53,26 @@ const ColumnComponent = (props: ColumnComponentProps): JSX.Element => {
                 isOver: monitor.isOver(),
             }
         },
-        drop(dragItem) {
-            dispatch(
-                MoveEntry({
-                    item: dragItem,
-                    sourceCol: dragItem.startLocation.colIndex,
-                    sourceEntryIndex: dragItem.startLocation.entryIndex,
-                    targetCol: colIndex,
-                }),
-            )
+        drop(dragItem, monitor) {
+            if (!monitor.didDrop())
+                dispatch(
+                    MoveEntry({
+                        item: dragItem,
+                        sourceCol: dragItem.startLocation.colIndex,
+                        sourceEntryIndex: dragItem.startLocation.entryIndex,
+                        targetCol: colIndex,
+                        targetIndex: items.length,
+                    }),
+                )
         },
     })
 
+    const ref = useRef<HTMLDivElement | null>(null)
+    drop(ref)
     return (
         <div
             className={classes.container}
-            ref={drop}
+            ref={ref}
             style={{ backgroundColor: isOver ? 'green' : 'transparent' }}
         >
             <div>

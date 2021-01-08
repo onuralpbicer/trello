@@ -11,10 +11,12 @@ export interface ItemWithType<T> {
     type: DragItemTypes.TodoItem
     item: T
     startLocation: EntryLocation
+    height: number
 }
 
 export interface DragProps {
     isDragging: boolean
+    height: number
 }
 
 export interface DropProps {
