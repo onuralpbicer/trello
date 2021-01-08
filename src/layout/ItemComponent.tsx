@@ -13,14 +13,18 @@ import { MoveEntry } from '../slices/columns.slice'
 
 const useStyles = makeStyles(
     createStyles({
-        container: {
+        innerContainer: {
             marginTop: '8px',
             border: '1px solid lightgrey',
             borderRadius: '4px',
             padding: '4px',
-            backgroundColor: 'lightgrey',
             width: '100%',
+            backgroundColor: 'lightgrey',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            maxHeight: '64px',
         },
+        outerContainer: {},
     }),
 )
 
@@ -90,12 +94,13 @@ const ItemComponent = (props: ItemComponentProps): JSX.Element => {
     return (
         <div
             ref={ref}
+            className={classes.outerContainer}
             style={{
                 display: isDragging ? 'none' : 'inherit',
                 paddingTop: isOver ? `${height}px` : undefined,
             }}
         >
-            <div className={classes.container}>{card.text}</div>
+            <div className={classes.innerContainer}>{card.text}</div>
         </div>
     )
 }
